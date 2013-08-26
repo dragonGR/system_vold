@@ -1710,6 +1710,14 @@ int VolumeManager::cleanupAsec(Volume *v, bool force) {
     AsecIdCollection removeAsec;
     AsecIdCollection removeObb;
 
+    // Continue for the primary storage (VOL_PROVIDES_ASEC) and for the
+    // external apps volume (VOL_EXTERNAL_APPS) if app moving is enabled
+    if ((v->getFlags() & VOL_PROVIDES_ASEC) == 0
+                && ((v->getFlags() & VOL_EXTERNAL_APPS) == 0
+                        || !v->isExternalAppsEnabled())) {
+        return 0;
+    }
+
     for (AsecIdCollection::iterator it = mActiveContainers->begin(); it != mActiveContainers->end();
             ++it) {
         ContainerData* cd = *it;
